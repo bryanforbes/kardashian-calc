@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Kardashian Calculator</title>
+
+	<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.3.0/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h1>Kardashian Calculator</h1>
+		</div>
+		<div class="row">
+			<div class="span7">
+				<form id="form">
+					<div class="clearfix">
+						<label for="from">Married On</label>
+						<div class="input">
+							<input type="text" id="from" type="text">
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="to">Until</label>
+						<div class="input">
+							<input type="text" id="to" type="text">
+						</div>
+					</div>
+					<div class="actions">
+						<input type="submit" class="btn primary" value="Calculate">
+					</div>
+				</form>
+			</div>
+			<div id="output" class="span9"></div>
+		</div>
+	</div>
+
+	<script>
+		require = { async: true };
+	</script>
+	<script src="dojo/dojo.js"></script>
+	<script>
+		require([
+			"kcalc", 
+			"dojo/on",
+			"dojo/dom",
+			"dojo/dom-class",
+			"dojo/query",
+			"dojo/date/locale"
+		], function(kcalc, on, dom, cls, query, locale){
+			var form = dom.byId("form"),
+				from = dom.byId("from"),
+				to = dom.byId("to"),
+				output = dom.byId("output");
+
+			to.value = locale.format(new Date(), { selector: "date" });
+
+			on(form, "submit", function(evt){
+				evt.preventDefault();
+
+				query("input[type='text']", form).forEach(function(node){
+					cls.remove(node.parentNode.parentNode, "error");
+				});
+
+
+				var f = locale.parse(from.value, { selector: "date" }),
+					t = locale.parse(to.value,   { selector: "date" });
+
+				if(!f){
+					cls.add(from.parentNode.parentNode, "error");
+					return;
+				}
+
+				if(!t){
+					cls.add(to.parentNode.parentNode, "error");
+					return;
+				}
+
+				output.innerHTML = "You have been married " + (Math.round(kcalc(f, t) * 100) / 100) + " Kardashians!";
+			});
+		});
+	</script>
+</body>
+</html>
