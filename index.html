@@ -41,13 +41,18 @@
 	<script src="dojo/dojo.js"></script>
 	<script>
 		require([
-			"kcalc", 
 			"dojo/on",
 			"dojo/dom",
 			"dojo/dom-class",
 			"dojo/query",
+			"dojo/date",
 			"dojo/date/locale"
-		], function(kcalc, on, dom, cls, query, locale){
+		], function(on, dom, cls, query, date, locale){
+			function kcalc(from, to){
+				var kardashians = (date.difference(from, to, "day") + 1) / 72;
+				return (Math.round(kardashians * 100) / 100)
+			}
+
 			var form = dom.byId("form"),
 				from = dom.byId("from"),
 				to = dom.byId("to"),
@@ -76,7 +81,7 @@
 					return;
 				}
 
-				output.innerHTML = "You have been married " + (Math.round(kcalc(f, t) * 100) / 100) + " Kardashians!";
+				output.innerHTML = "You have been married " + kcalc(f, t) + " Kardashians!";
 			});
 		});
 	</script>
