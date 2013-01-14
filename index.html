@@ -53,7 +53,10 @@
 		], function(on, dom, cls, query, date, locale){
 			function kcalc(from, to){
 				var kardashians = (date.difference(from, to, "day") + 1) / 72;
-				return (Math.round(kardashians * 100) / 100)
+				return {
+					kardashians: (Math.round(kardashians * 100) / 100),
+					kardashiaversary: locale.format(date.add(from, "day", Math.ceil(kardashians) * 72), { selector: "date" })
+				}
 			}
 
 			var form = dom.byId("form"),
@@ -72,7 +75,9 @@
 
 
 				var f = locale.parse(from.value, { selector: "date" }),
-					t = locale.parse(to.value,   { selector: "date" });
+					t = locale.parse(to.value,   { selector: "date" }),
+					outhtml = [],
+					data = {};
 
 				if(!f){
 					cls.add(from.parentNode.parentNode, "error");
@@ -84,7 +89,12 @@
 					return;
 				}
 
-				output.innerHTML = "You have been married " + kcalc(f, t) + " Kardashians!";
+				data = kcalc(f, t);
+
+				outhtml.push("You have been married <strong>" + data.kardashians + "</strong> Kardashians!");
+				outhtml.push("Your next Kardashiaversary is on " + data.kardashiaversary);
+
+				output.innerHTML = outhtml.join("<br />");
 			});
 
 			query("input").forEach(function(node){
